@@ -1,6 +1,8 @@
 # healthchecks.io Shell Wrapper
 A portable shell wrapper to track script start/stop, logs and failures and push into healthchecks.io. Typically used within a cron job.
 
+_curl is required_
+
 ## Usage
 `wrapper.sh [--logs] [healthcheck uuid] command...`
 
