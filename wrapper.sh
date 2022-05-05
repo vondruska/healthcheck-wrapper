@@ -11,13 +11,17 @@ UUID="$1"
 shift
 
 curl -s -m 10 --retry 5 -o /dev/null https://hc-ping.com/"$UUID"/start
-m=$("$@" 2>&1)
+OUTPUT=$("$@" 2>&1)
 EXIT_CODE=$?
 
-curl -fsS -m 10 --retry 5 --data-raw "$m" -o /dev/null https://hc-ping.com/"$UUID"/"$EXIT_CODE"
+# Remove ANSI codes
+# Adapted from https://stackoverflow.com/a/30938702
+OUTPUT_FILTERED=$(echo "$OUTPUT" | sed -r "s/\x1B\[(([0-9]{1,2})?(;)?([0-9]{1,2})?)?[m,K,H,f,J]//g")
+
+curl -fsS -m 10 --retry 5 --data-raw "$OUTPUT_FILTERED" -o /dev/null https://hc-ping.com/"$UUID"/"$EXIT_CODE"
 
 if [ $OUTPUT_LOGS -eq 1 ]; then
-  echo "$m"
+  echo "$OUTPUT"
 fi
 
 exit $EXIT_CODE
